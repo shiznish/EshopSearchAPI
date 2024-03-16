@@ -22,7 +22,7 @@ public class AuthService : IAuthService
         this._jwtSettins = jwtSettins.Value;
         this._signInManager = signInManager;
     }
-    public async Task<AuthResponse> Login(AuthRequest authRequest)
+    public async Task<AuthResponse> Login(AuthRequest authRequest, string ipAddress)
     {
         var user = await _userManager.FindByEmailAsync(authRequest.Email);
         if (user == null)

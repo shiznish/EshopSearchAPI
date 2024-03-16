@@ -2,11 +2,11 @@
 using Application.Features.Product.Queries;
 using Domain.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-
-
 namespace API.Controllers;
+
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
