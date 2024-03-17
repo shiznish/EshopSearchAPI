@@ -8,12 +8,8 @@ public class SearchHistoryConfiguration : IEntityTypeConfiguration<SearchHistory
 
     public void Configure(EntityTypeBuilder<SearchHistory> builder)
     {
-        builder.HasOne(uq => uq.Customer)
-             .WithMany()
-             .HasForeignKey(uq => uq.CustomerId)
-             .IsRequired();
 
-        builder.HasIndex(uq => uq.CustomerId);
+        builder.HasIndex(uq => uq.UserId);
 
         builder.Property(c => c.SortColumn)
               .HasMaxLength(100);

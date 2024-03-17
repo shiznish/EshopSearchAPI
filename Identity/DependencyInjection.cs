@@ -84,6 +84,9 @@ public static class DependencyInjection
                 };
             });
         #endregion
+        #region Current User
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        #endregion
 
         return services;
     }

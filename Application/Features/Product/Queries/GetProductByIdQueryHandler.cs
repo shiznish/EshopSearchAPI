@@ -16,34 +16,23 @@ public record GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pr
     }
     public async Task<Result<ProductDetailsDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        try
+        var product = await _unitOfWork
+                           .ProductRepository
+                           .GetAsync(request.Id);
+
+        if (product is null)
         {
-            var product = await _unitOfWork
-           .ProductRepository
-           .GetAsync(request.Id);
-
-            if (product is null)
-            {
-                return Result.Failure<ProductDetailsDto>(new Error(
-                    "Product.NotFound",
-                    $"The product with Id {request.Id} was not found"));
-            }
-
-            product.IncrementPupularity();
-            _unitOfWork.ProductRepository.Update(product);
-            await _unitOfWork.SaveChangesAsync();
-
-            var response = _mapper.Map<ProductDetailsDto>(product);
-
-            return response;
-        }
-        catch (Exception ex)
-        {
-
-            throw;
+            return Result.Failure<ProductDetailsDto>(new Error(
+                "Product.NotFound",
+                $"The product with Id {request.Id} was not found"));
         }
 
+        product.IncrementPupularity();
+        _unitOfWork.ProductRepository.Update(product);
+        await _unitOfWork.SaveChangesAsync();
 
+        var response = _mapper.Map<ProductDetailsDto>(product);
 
+        return response;
     }
 }

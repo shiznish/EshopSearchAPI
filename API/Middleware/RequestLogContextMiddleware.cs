@@ -13,10 +13,22 @@ public class RequestLogContextMiddleware
 
     public Task InvokeAsync(HttpContext httpContext)
     {
-        using (LogContext.PushProperty("CorrelationId", httpContext.TraceIdentifier))
+
+        using (LogContext.PushProperty("ClientIp", GenerateIPAddress(httpContext)))
         {
             return _next(httpContext);
         }
+
     }
+
+    private string GenerateIPAddress(HttpContext httpContext)
+    {
+        if (httpContext.Request.Headers.ContainsKey("X-Forwarded-For"))
+            return httpContext.Request.Headers["X-Forwarded-For"];
+        else
+            return httpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+    }
+
+
 }
 

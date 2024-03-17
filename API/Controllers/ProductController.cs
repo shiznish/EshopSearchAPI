@@ -1,5 +1,5 @@
-﻿using Application.Features.Product.Commands;
-using Application.Features.Product.Queries;
+﻿using Application.Features.Product.Queries;
+using Application.Features.User.Queries;
 using Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +19,7 @@ public class ProductController : ControllerBase
     }
 
     // GET: api/<ProductController>
-    [HttpGet]
+    [HttpGet("Search")]
     public async Task<ActionResult<IList<ProductDto>>> Get(string? searchTerm,
             string? sortColumn,
             string? sortOrder,
@@ -42,24 +42,35 @@ public class ProductController : ControllerBase
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
-    // POST api/<ProductController>
-    [HttpPost]
-    public async Task<IActionResult> Post(CreateProductCommand command, CancellationToken cancellationToken)
-    {
-        var result = await _mediator.Send(command, cancellationToken);
-        return result.IsSuccess ? Ok() : BadRequest(result.Error);
 
+    [HttpGet("SearchHistory")]
+    public async Task<IActionResult> GetSearchHistory(string userId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = new GetUserSearchHistoryQuery(userId, page, pageSize);
+
+        var response = await _mediator.Send(query, cancellationToken);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
-    // PUT api/<ProductController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
+    //// POST api/<ProductController>
+    //[HttpPost]
+    //public async Task<IActionResult> Post(CreateProductCommand command, CancellationToken cancellationToken)
+    //{
+    //    var result = await _mediator.Send(command, cancellationToken);
+    //    return result.IsSuccess ? Ok() : BadRequest(result.Error);
 
-    // DELETE api/<ProductController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
-    }
+    //}
+
+    //// PUT api/<ProductController>/5
+    //[HttpPut("{id}")]
+    //public void Put(int id, [FromBody] string value)
+    //{
+    //}
+
+    //// DELETE api/<ProductController>/5
+    //[HttpDelete("{id}")]
+    //public void Delete(int id)
+    //{
+    //}
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Core.Abstractions.Messaging;
 using Application.Core.Abstractions.Sort.Relevance.Product;
 using Application.Core.Data.UnitOfWork;
+using Application.Identity;
 using AutoMapper;
 using Domain.Customers;
 using Domain.Shared;
@@ -13,12 +14,14 @@ public record GetAllProductsQueryHandler
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IProductSearchService _productSearchService;
+    private readonly ICurrentUser _currentUser;
 
-    public GetAllProductsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IProductSearchService productSearchService)
+    public GetAllProductsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IProductSearchService productSearchService, ICurrentUser currentUser)
     {
         this._unitOfWork = unitOfWork;
         this._mapper = mapper;
         this._productSearchService = productSearchService;
+        this._currentUser = currentUser;
     }
     public async Task<Result<PagedList<ProductResponse>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
@@ -71,7 +74,7 @@ public record GetAllProductsQueryHandler
             request.Page,
             request.PageSize);
 
-        var searchhistory = SearchHistory.Create(request.SearchTerm, timeStamp, request.SortColumn, request.SortOrder);
+        var searchhistory = SearchHistory.Create(request.SearchTerm, timeStamp, _currentUser.UserId, request.SortColumn, request.SortOrder);
         await _unitOfWork.GetRepository<Domain.Customers.SearchHistory>().AddAsync(searchhistory);
         await _unitOfWork.SaveChangesAsync();
 
