@@ -1,5 +1,4 @@
-﻿using Application.Core.Abstractions.Behaviors;
-using Application.Core.Abstractions.Sort.Relevance.Product;
+﻿using Application.Core.Abstractions.Sort.Relevance.Product;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +14,7 @@ public static class DependencyInjection
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(assembly);
-            configuration.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
+            //  configuration.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(assembly);
